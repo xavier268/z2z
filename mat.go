@@ -253,7 +253,7 @@ func (m *Mat) NewCol() {
 	m.Normalize()
 }
 
-// MatMul multiply both matrixes, returning a new one.
+// MatMul multiply both matrixes, returning a m x n in a new one.
 // m and n are unchanged.
 func (m *Mat) MatMul(n *Mat) *Mat {
 	if n == nil || m.c != n.l {

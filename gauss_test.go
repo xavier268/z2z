@@ -1,6 +1,7 @@
 package z2z
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -74,5 +75,25 @@ func TestGaussCols(t *testing.T) {
 	m.addCols(2, 3)
 	if !m.Equal(ref) {
 		t.Fatal("double addCols failed")
+	}
+}
+
+func TestGaussInvert(t *testing.T) {
+	m := NewMat(3, 3)
+
+	m.Ones()
+	m.Set(0, 0, 0)
+	m.Set(0, 1, 0)
+	m.Set(1, 1, 0)
+
+	id, iv := m.Gauss()
+	fmt.Println(m)
+	fmt.Println(id)
+	fmt.Println(iv)
+
+	r := m.MatMul(iv)
+	if !r.Equal(id) {
+		fmt.Println(r)
+		fmt.Println("Gauss failed to generate a valid decomposition")
 	}
 }
