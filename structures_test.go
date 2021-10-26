@@ -26,7 +26,7 @@ func TestString(t *testing.T) {
 	}
 
 	for _, d := range tdata {
-		v := NewVect(d.int)
+		v := NewMat(1, d.int)
 		ss := v.String()
 		if d.string != ss {
 			fmt.Printf("Length   : %d\nExpected : %s\nGot      : %s\n", d.int, d.string, ss)
