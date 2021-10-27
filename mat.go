@@ -34,8 +34,13 @@ func NewMat(l, c int) *Mat {
 
 // NewId constructs Id matrix n x n
 func NewId(n int) *Mat {
-	r := NewMat(n, n)
-	for i := 0; i < n; i++ {
+	return NewProjector(n, n)
+}
+
+// NewProjector construct a Projector (ie, diagonal set to 1) of dimension l x c
+func NewProjector(l, c int) *Mat {
+	r := NewMat(l, c)
+	for i := 0; i < l && i < c; i++ {
 		r.Set(i, i, 1)
 	}
 	return r
@@ -139,7 +144,7 @@ func (m *Mat) String() string {
 	}
 	var b strings.Builder
 	for l := 0; l < m.l; l++ {
-		fmt.Fprintf(&b, "\t%s\n", m.stringL(l))
+		fmt.Fprintf(&b, "%s\n", m.stringL(l))
 	}
 	return b.String()
 }
