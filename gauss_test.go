@@ -98,14 +98,39 @@ func TestGaussCols(t *testing.T) {
 func TestGaussInvert(t *testing.T) {
 	var m *Mat
 
+	m = NewId(65)
+	if !testInvert(t, m) {
+		t.Fatal("should be inversible")
+	}
+
+	m = NewId(64)
+	if !testInvert(t, m) {
+		t.Fatal("should be inversible")
+	}
+
 	m = NewId(11)
 	m.swapCols(2, 7)
 	m.addCols(1, 8)
-	testInvert(t, m)
+	if !testInvert(t, m) {
+		t.Fatal("should be inversible")
+	}
+
+	m = NewId(11)
+	m.swapCols(2, 7)
+	m.addCols(1, 8)
+	if !testInvert(t, m) {
+		t.Fatal("should be inversible")
+	}
 
 	m = NewMat(3, 3)
 	m.Randomize()
 	testInvert(t, m)
+
+	m = NewMat(6, 3)
+	m.Randomize()
+	if testInvert(t, m) {
+		t.Fatal("should NOT be inversible")
+	}
 
 	m = NewMat(8, 8)
 	m.Randomize()
@@ -113,7 +138,9 @@ func TestGaussInvert(t *testing.T) {
 
 	m = NewMat(127, 63)
 	m.Randomize()
-	testInvert(t, m)
+	if testInvert(t, m) {
+		t.Fatal("should NOT be inversible")
+	}
 
 	m = NewMat(63, 63)
 	m.Randomize()
@@ -125,7 +152,7 @@ func TestGaussInvert(t *testing.T) {
 
 }
 
-func testInvert(t *testing.T, m *Mat) {
+func testInvert(t *testing.T, m *Mat) bool {
 	var r *Mat
 	id, iv, ok := m.Gauss()
 
@@ -156,4 +183,5 @@ func testInvert(t *testing.T, m *Mat) {
 	} else {
 		fmt.Println("m is not inversible", m.l, m.c)
 	}
+	return ok
 }

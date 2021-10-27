@@ -52,7 +52,6 @@ func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
 	}
 	id = m.Clone() // l x c , same dim as m
 
-	//p(id, iv)
 	for r := 0; r < m.l && r < m.c; r++ {
 		// ensure (r,r) is 1
 		if id.Get(r, r) == 0 {
@@ -61,25 +60,10 @@ func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
 				if id.Get(l, r) == 1 {
 					id.swapLines(r, l)
 					iv.swapLines(r, l)
-					//p(id, iv)
 					break
 				}
 			}
 		}
-		/*
-			// did we managed a 1 ?
-			if id.Get(r, r) == 0 {
-				// look for a col later to swap ?
-				for c := r + 1; c < id.c; c++ {
-					if id.Get(r, c) == 1 {
-						id.swapCols(r, c)
-						iv.swapCols(r, c)
-						p(id, iv)
-						break
-					}
-				}
-			}
-		*/
 
 		// no way to get a 1, lets continue, not invertible
 		if id.Get(r, r) == 0 {
@@ -92,30 +76,10 @@ func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
 				if l != r && id.Get(l, r) == 1 {
 					id.addLines(l, r)
 					iv.addLines(l, r)
-					//p(id, iv)
 				}
 			}
-			/*
-				// and the rest of the cols
-				for c := 0; c < id.c; c++ {
-					if c != r && id.Get(r, c) == 1 {
-						id.addCols(c, r)
-						iv.addCols(c, r)
-						p(id, iv)
-					}
-				}
-			*/
+
 		}
 	}
 	return id, iv, ok
 }
-
-/*
-// debug
-func p(id, iv *Mat) {
-	fmt.Println("Debug - i-star :")
-	fmt.Println(id)
-	fmt.Println("Debug - i-v :")
-	fmt.Println(iv)
-}
-*/
