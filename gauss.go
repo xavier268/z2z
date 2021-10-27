@@ -46,7 +46,7 @@ func (m *Mat) addCols(i, j int) {
 // m is unchanged.
 func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
 	ok = (m.c == m.l)
-	iv = NewMat(m.l, m.c) // l x c
+	iv = NewMat(m.l, m.l) // l x l
 	for i := 0; i < m.l && i < m.c; i++ {
 		iv.Set(i, i, 1)
 	}
