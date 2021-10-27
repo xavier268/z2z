@@ -266,12 +266,36 @@ func (m *Mat) MatMul(n *Mat) *Mat {
 	}
 	r := NewMat(m.l, n.c)
 
-	// TODO
 	for l := 0; l < m.l; l++ {
 		for lc := 0; lc < m.c; lc++ {
 			for c := 0; c < n.c; c++ {
 				v := r.Get(l, c) ^ (m.Get(l, lc) & n.Get(lc, c))
 				r.Set(l, c, v)
+			}
+		}
+	}
+	return r
+}
+
+// TODO - Not working - Optimized version attempt.
+// TODO - Wrong, not working.
+func (m *Mat) matMulOptim(n *Mat) *Mat {
+	if n == nil || m.c != n.l {
+		panic("dimensions are mismatched")
+	}
+	r := NewMat(m.l, n.c)
+	// idea is to transpose n so that operations can be done on full uint64 words.
+	p := n.Clone().T()
+	for l := range m.d {
+		var v uint64
+		for c := range p.d {
+			v ^= m.d[l] & p.d[c]
+			for i := 0; i < n.c; i++ {
+				if v&(1<<i%64) == 0 {
+					r.Set(l, i, 0)
+				} else {
+					r.Set(l, i, 1)
+				}
 			}
 		}
 	}
