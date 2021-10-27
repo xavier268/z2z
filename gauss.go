@@ -78,7 +78,6 @@ func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
 					iv.addLines(l, r)
 				}
 			}
-
 		}
 	}
 	return id, iv, ok
