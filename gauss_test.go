@@ -38,6 +38,23 @@ func TestGaussLines(t *testing.T) {
 		t.Fatal("double add failed")
 	}
 
+	m = NewMat(127, 63)
+	m.Randomize()
+	ref = m.Clone()
+	// fmt.Println(m)
+
+	m.swapLines(126, 62)
+	for c := 0; c < m.c; c++ {
+		v, w := m.Get(126, c), m.Get(62, c)
+		if v != ref.Get(62, c) || w != ref.Get(126, c) {
+			t.Fatal("swapLines failed")
+		}
+	}
+	m.swapLines(126, 62)
+	if !m.Equal(ref) {
+		t.Fatal("double swap failed")
+	}
+
 }
 
 func TestGaussCols(t *testing.T) {
@@ -79,21 +96,64 @@ func TestGaussCols(t *testing.T) {
 }
 
 func TestGaussInvert(t *testing.T) {
-	m := NewMat(3, 3)
+	var m *Mat
 
-	m.Ones()
-	m.Set(0, 0, 0)
-	m.Set(0, 1, 0)
-	m.Set(1, 1, 0)
+	m = NewId(11)
+	m.swapCols(2, 7)
+	m.addCols(1, 8)
+	testInvert(t, m)
 
-	id, iv := m.Gauss()
-	fmt.Println(m)
-	fmt.Println(id)
-	fmt.Println(iv)
+	m = NewMat(3, 3)
+	m.Randomize()
+	testInvert(t, m)
 
-	r := m.MatMul(iv)
-	if !r.Equal(id) {
-		fmt.Println(r)
-		fmt.Println("Gauss failed to generate a valid decomposition")
+	m = NewMat(8, 8)
+	m.Randomize()
+	testInvert(t, m)
+
+	m = NewMat(127, 63)
+	m.Randomize()
+	testInvert(t, m)
+
+	m = NewMat(63, 63)
+	m.Randomize()
+	testInvert(t, m)
+
+	m = NewMat(63, 63)
+	m.Randomize()
+	testInvert(t, m)
+
+}
+
+func testInvert(t *testing.T, m *Mat) {
+	var r *Mat
+	id, iv, ok := m.Gauss()
+
+	if m.c == m.l {
+		idd := NewId(m.c)
+		if (idd.Equal(id)) != ok {
+			fmt.Println(m)
+			fmt.Println(id)
+			fmt.Println(iv)
+			fmt.Println(ok)
+			t.Fatal("inconsitant id and ok")
+		}
+	}
+
+	if ok {
+		fmt.Println("m is inversible", m.l, m.c)
+		r = m.MatMul(iv)
+		if !r.Equal(id) {
+			fmt.Println(m)
+			fmt.Println(id)
+			fmt.Println(iv)
+			fmt.Println(ok)
+			fmt.Println(r)
+			fmt.Println("inverse did not verify", m.l, m.c)
+		} else {
+			fmt.Println("inverse verified", m.l, m.c)
+		}
+	} else {
+		fmt.Println("m is not inversible", m.l, m.c)
 	}
 }

@@ -1,7 +1,5 @@
 package z2z
 
-import "fmt"
-
 // swap lines i and j
 func (m *Mat) swapLines(i, j int) {
 	if i == j {
@@ -42,18 +40,19 @@ func (m *Mat) addCols(i, j int) {
 }
 
 // Gauss apply the Gauss-Jordan pivot to compute inverse of m.
-// If m is invertible, then id is identity and iv is inverse.
-// If m is NOT invertible, id contains id as a topleft submatrix,
+// If m is invertible, then id is identity and iv is inverse and ok is true
+// If m is NOT invertible, id contains identity as a topleft submatrix, and ok is false
 // and 0 elsewhere, and iv * m = id
 // m is unchanged.
-func (m *Mat) Gauss() (id, iv *Mat) {
-	iv = NewMat(m.c, m.l) // c x l
+func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
+	ok = (m.c == m.l)
+	iv = NewMat(m.l, m.c) // l x c
 	for i := 0; i < m.l && i < m.c; i++ {
 		iv.Set(i, i, 1)
 	}
 	id = m.Clone() // l x c , same dim as m
 
-	p(id, iv)
+	//p(id, iv)
 	for r := 0; r < m.l && r < m.c; r++ {
 		// ensure (r,r) is 1
 		if id.Get(r, r) == 0 {
@@ -61,26 +60,30 @@ func (m *Mat) Gauss() (id, iv *Mat) {
 			for l := r + 1; l < id.l; l++ {
 				if id.Get(l, r) == 1 {
 					id.swapLines(r, l)
-					iv.swapCols(r, l)
-					p(id, iv)
+					iv.swapLines(r, l)
+					//p(id, iv)
 					break
 				}
 			}
 		}
-		// did we managed a 1 ?
-		if id.Get(r, r) == 0 {
-			// look for a col later to swap ?
-			for c := r + 1; c < id.c; c++ {
-				if id.Get(r, c) == 1 {
-					id.swapCols(r, c)
-					iv.swapCols(r, c)
-					p(id, iv)
-					break
+		/*
+			// did we managed a 1 ?
+			if id.Get(r, r) == 0 {
+				// look for a col later to swap ?
+				for c := r + 1; c < id.c; c++ {
+					if id.Get(r, c) == 1 {
+						id.swapCols(r, c)
+						iv.swapCols(r, c)
+						p(id, iv)
+						break
+					}
 				}
 			}
-		}
+		*/
+
 		// no way to get a 1, lets continue, not invertible
 		if id.Get(r, r) == 0 {
+			ok = false
 			continue
 		} else {
 			// we have a 1 at (r,r),
@@ -89,22 +92,25 @@ func (m *Mat) Gauss() (id, iv *Mat) {
 				if l != r && id.Get(l, r) == 1 {
 					id.addLines(l, r)
 					iv.addLines(l, r)
-					p(id, iv)
+					//p(id, iv)
 				}
 			}
-			// and the rest of the cols
-			for c := 0; c < id.c; c++ {
-				if c != r && id.Get(r, c) == 1 {
-					id.addCols(c, r)
-					iv.addCols(c, r)
-					p(id, iv)
+			/*
+				// and the rest of the cols
+				for c := 0; c < id.c; c++ {
+					if c != r && id.Get(r, c) == 1 {
+						id.addCols(c, r)
+						iv.addCols(c, r)
+						p(id, iv)
+					}
 				}
-			}
+			*/
 		}
 	}
-	return id, iv
+	return id, iv, ok
 }
 
+/*
 // debug
 func p(id, iv *Mat) {
 	fmt.Println("Debug - i-star :")
@@ -112,3 +118,4 @@ func p(id, iv *Mat) {
 	fmt.Println("Debug - i-v :")
 	fmt.Println(iv)
 }
+*/
