@@ -61,3 +61,27 @@ func ExampleNewFromInt() {
 	// 3 6
 
 }
+
+func ExampleMat_Apply() {
+	m := NewMat(3, 4)
+	m.Apply(func(i, j int) int {
+		return (i + j) % 2
+	})
+	fmt.Println(m)
+	// Output:
+	// 1010
+	// 0101
+	// 1010
+}
+func ExampleMat_Apply_useExistingValue() {
+	m := NewId(4)
+	m.Apply(func(i, j int) int {
+		return 1 - m.Get(i, j)
+	})
+	fmt.Println(m)
+	// Output:
+	// 1110
+	// 1101
+	// 1011
+	// 0111
+}

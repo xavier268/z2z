@@ -362,3 +362,14 @@ func (m *Mat) CloneDims(l, c int) (n *Mat) {
 	}
 	return n
 }
+
+// Apply a function to the matrix that takes coordinates as input,
+// generating the value to Set (0 or 1)
+func (m *Mat) Apply(f func(i, j int) (value int)) {
+	for i := 0; i < m.l; i++ {
+		for j := 0; j < m.c; j++ {
+			m.Set(i, j, f(i, j))
+		}
+	}
+
+}
