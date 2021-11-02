@@ -5,26 +5,28 @@ import (
 	"testing"
 )
 
-func TestVerifyMatMulOptim(t *testing.T) {
+func TestMatMulTr(t *testing.T) {
 
-	verifyMatMulOptim(t, 6, 6, 6)
+	verifyMatMulTr(t, 6, 8, 5)
 
 }
 
-func verifyMatMulOptim(t *testing.T, l int, c int, cc int) {
-	m := NewMat(l, c)
-	p := NewMat(c, cc)
-	m.Randomize()
-	p.Randomize()
+func verifyMatMulTr(t *testing.T, l int, c int, cc int) {
+	for i := 0; i < 20; i++ {
+		m := NewMat(l, c)
+		p := NewMat(c, cc)
+		m.Randomize()
+		p.Randomize()
 
-	r1 := m.MatMul(p)
-	r2 := m.matMulOptim(p)
+		r1 := m.matMulNaive(p)
+		r2 := m.matMulTr(p.T())
 
-	if !r1.Equal(r2) {
-		fmt.Println("Want :\n", r1)
-		fmt.Println("Got  :\n", r2)
-		t.Fatal("matrix optimization does not give correct result")
+		if !r1.Equal(r2) {
+			fmt.Println("Want :\n", r1)
+			fmt.Println("Got  :\n", r2)
+			t.Fatal("matrix optimization does not give correct result")
 
+		}
 	}
 
 }

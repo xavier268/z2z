@@ -259,8 +259,9 @@ func (m *Mat) NewCol() {
 }
 
 // MatMul multiply both matrixes, returning a m x n in a new one.
+// Naive implementation.
 // m and n are unchanged.
-func (m *Mat) MatMul(n *Mat) *Mat {
+func (m *Mat) matMulNaive(n *Mat) *Mat {
 	if n == nil || m.c != n.l {
 		panic("dimensions are mismatched")
 	}
@@ -277,26 +278,29 @@ func (m *Mat) MatMul(n *Mat) *Mat {
 	return r
 }
 
-// TODO - Not working - Optimized version attempt.
-// TODO - Wrong, not working.
-func (m *Mat) matMulOptim(n *Mat) *Mat {
-	if n == nil || m.c != n.l {
+// MatMul multiply both matrixes, returning a m x n in a new one.
+// m and n are unchanged.
+func (m *Mat) MatMul(n *Mat) *Mat {
+	return m.matMulTr(n.T())
+}
+
+// Multiply m by n transposed.
+// More efficient due to word by word operations.
+func (m *Mat) matMulTr(p *Mat) *Mat {
+	if p == nil || m.c != p.c {
 		panic("dimensions are mismatched")
 	}
-	r := NewMat(m.l, n.c)
+	r := NewMat(m.l, p.l)
 	// idea is to transpose n so that operations can be done on full uint64 words.
-	p := n.Clone().T()
-	for l := range m.d {
-		var v uint64
-		for c := range p.d {
-			v ^= m.d[l] & p.d[c]
-			for i := 0; i < n.c; i++ {
-				if v&(1<<i%64) == 0 {
-					r.Set(l, i, 0)
-				} else {
-					r.Set(l, i, 1)
-				}
+
+	w := m.nbOfWordsPerLine()
+	for i := 0; i < m.l; i++ {
+		for j := 0; j < p.l; j++ {
+			var v uint64
+			for c := 0; c < w; c++ {
+				v ^= m.d[i/w+c] & p.d[j/w+c]
 			}
+			r.Set(i, j, bits.OnesCount64(v)&1)
 		}
 	}
 	return r
