@@ -34,3 +34,30 @@ func ExampleMat_GaussShort() {
 	// check : true
 	// check : true
 }
+
+func ExampleNewFromInt() {
+
+	m := NewFromInt(
+		0b111,
+		0b001100110011,
+		0b111111110000,
+	)
+
+	fmt.Println(m)
+	fmt.Println(m.CloneDims(5, 5))              // adjust to 5x5
+	fmt.Println(m.CloneDims(0, 6).Dimensions()) // adjust to 3x6
+
+	// Output:
+	// 0000000000000000000000000000000000000000000000000000000000000111
+	// 0000000000000000000000000000000000000000000000000000001100110011
+	// 0000000000000000000000000000000000000000000000000000111111110000
+	//
+	// 00111
+	// 10011
+	// 10000
+	// 00000
+	// 00000
+	//
+	// 3 6
+
+}

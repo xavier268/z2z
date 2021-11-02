@@ -332,3 +332,33 @@ func (m *Mat) Equal(n *Mat) bool {
 	}
 	return true
 }
+
+// NewFromInt constructs a matrix from the provided uint64_s.
+// Each value represent a line.
+// There are always 64 columns.
+func NewFromInt(ss ...uint64) *Mat {
+	m := NewMat(len(ss), 64)
+	for d := range m.d {
+		m.d[d] = ss[d]
+	}
+	return m
+}
+
+// CloneDims clone m into a new matrix with different dimensions.
+// m is unchanged, n is 0-padded if necessary.
+// Specify a 0 or negative value to keep the existing dimension.
+func (m *Mat) CloneDims(l, c int) (n *Mat) {
+	if l <= 0 {
+		l = m.l
+	}
+	if c <= 0 {
+		c = m.c
+	}
+	n = NewMat(l, c)
+	for i := 0; i < m.l && i < n.l; i++ {
+		for j := 0; j < m.c && j < n.c; j++ {
+			n.Set(i, j, m.Get(i, j))
+		}
+	}
+	return n
+}
