@@ -191,6 +191,23 @@ func TestGaussFull(t *testing.T) {
 	testGaussFull(t, 129, 65)
 }
 
+func TestRank(t *testing.T) {
+	var (
+		ok bool
+		rk int
+	)
+	m := NewId(4)
+	_, _, ok, rk = m.GaussFull()
+	if !ok || rk != 4 {
+		t.Fatal("unexpected rank 4x4")
+	}
+	m = m.CloneDims(6, 0)
+	_, _, ok, rk = m.GaussFull()
+	if ok || rk != 4 {
+		t.Fatal("unexpected rank 6x4")
+	}
+}
+
 func testGaussFull(t *testing.T, l int, c int) {
 	for i := 0; i < 20; i++ {
 		l, c = c, l // swap l and c
@@ -198,11 +215,19 @@ func testGaussFull(t *testing.T, l int, c int) {
 		m := NewMat(l, c)
 		m.Randomize()
 
-		re, iv, ok := m.GaussFull()
+		re, iv, ok, rk := m.GaussFull()
 		ivxm := iv.MatMul(m)
 		id := NewId(m.l)
 
-		fmt.Printf("testGaussFull : round = %d, dims = %dx%d\t invertible : %v\n", i, l, c, ok)
+		fmt.Printf("testGaussFull : round = %d, dims = %dx%d\t invertible : %v\t rank = %d\n", i, l, c, ok, rk)
+
+		if rk > m.c || rk > m.l {
+			t.Fatalf("rank %d is inconsistant with dimensions %d x %d ", rk, m.l, m.c)
+		}
+
+		if !ok && rk == m.c && rk == m.l {
+			t.Fatalf("ok = %v while rank % d ==  dimensions (%d x %d)", ok, rk, m.l, m.c)
+		}
 
 		if !ivxm.Equal(re) {
 			fmt.Println("m")

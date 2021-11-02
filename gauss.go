@@ -89,7 +89,9 @@ func (m *Mat) GaussShort() (iv *Mat) {
 // GaussFull computes a full row echelon format (re) and the quasi inverse (iv).
 // ok is true if m was inversible, and in such case, re is identity.
 // iv(l,l) * m (l,c) = re (l,c)
-func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool) {
+// If ok is true, determinant is 1, it is 0 otherwise.
+// The rk is the rank of the matrix.
+func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool, rk int) {
 	ok = (m.c == m.l)
 	iv = NewId(m.l) // l x l, Id or projector in a sub-space.
 	re = m.Clone()  // l x c , same dim as m
@@ -114,7 +116,7 @@ func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool) {
 			rc++
 			continue
 		} else {
-			// we have a 1 at (r,r),
+			// we have a 1 at (rl,rc),
 			// lets clean up the rest of the lines
 			for l := 0; l < re.l; l++ {
 				if l != rl && re.Get(l, rc) == 1 {
@@ -124,7 +126,8 @@ func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool) {
 			}
 			rc++
 			rl++
+			rk++
 		}
 	}
-	return re, iv, ok
+	return re, iv, ok, rk
 }

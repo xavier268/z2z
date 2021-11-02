@@ -73,7 +73,7 @@ func ExampleMat_Apply() {
 	// 0101
 	// 1010
 }
-func ExampleMat_Apply_useExistingValue() {
+func ExampleMat_Apply_usePreExistingValues() {
 	m := NewId(4)
 	m.Apply(func(i, j int) int {
 		return 1 - m.Get(i, j)
