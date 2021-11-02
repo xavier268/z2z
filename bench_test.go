@@ -157,7 +157,7 @@ func BenchmarkGaussFull5000(b *testing.B) {
 // Naive multiplication is always worse the the transposed implementation, including the cost of the transpose operation.
 // Naive is 0(n^3), and TransposedMul, while asymptotically O(n^3),  is ~ 50x more efficient and looks more like O(n^2)
 // for smaller dimensions.
-// GaussShort is only slightly faster than GassFull, but will be significantly faster on non invertible large matrices.
+// GaussShort is only slightly faster than GaussFull, but will be significantly faster on non invertible large matrices.
 
 //
 //
