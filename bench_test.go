@@ -38,7 +38,7 @@ func BenchmarkMatMulTr5(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		m = m.matMulTr(m.T())
+		m = m.MatMulTr(m.T())
 	}
 }
 
@@ -48,7 +48,7 @@ func BenchmarkMatMulTr50(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		m = m.matMulTr(m.T())
+		m = m.MatMulTr(m.T())
 	}
 }
 func BenchmarkMatMulTr500(b *testing.B) {
@@ -57,7 +57,7 @@ func BenchmarkMatMulTr500(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		m = m.matMulTr(m.T())
+		m = m.MatMulTr(m.T())
 	}
 }
 
@@ -67,7 +67,7 @@ func BenchmarkMatMulTr5000(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		m = m.matMulTr(m.T())
+		m = m.MatMulTr(m.T())
 	}
 }
 

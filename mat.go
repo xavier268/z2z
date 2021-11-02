@@ -7,19 +7,19 @@ import (
 	"strings"
 )
 
-// Mat is a matrix, its dimesions are l x c.
+// Mat is a matrix, its dimensions are l_ines x c_olumns.
 // Neither l nor c should be 0.
 type Mat struct {
-	// column bits are packed in a uint64
+	// column bits are packed in one or more uint64
 	// each line uses nbOfWordsPerLine uint64
 	// The last uint64 of each line may be partial. In such case, it must be padded with 0.
-	// To extract the line l, slice [l * (1 + ((m.c - 1) / 64)) : i < (l+1)*(1+((m.c-1)/64))]
 	l, c int      // nb of lines and columns in BITS
 	d    []uint64 // actual data
 }
 
 const (
 	uintmax = 0xFFFF_FFFF_FFFF_FFFF
+	Version = "0.3.2"
 )
 
 // NewMat constructs a l x c matrix.
@@ -32,7 +32,7 @@ func NewMat(l, c int) *Mat {
 	return m
 }
 
-// NewId constructs Id matrix n x n
+// NewId constructs the identity matrix n x n, diagonal is set to 1.
 func NewId(n int) *Mat {
 	return NewProjector(n, n)
 }
@@ -46,14 +46,14 @@ func NewProjector(l, c int) *Mat {
 	return r
 }
 
-// Clone retuns a deep copy of m.
+// Clone returns a deep copy of m.
 func (m *Mat) Clone() *Mat {
 	mm := NewMat(m.l, m.c)
 	copy(mm.d, m.d)
 	return mm
 }
 
-// Dimensions returns (lines , volumns).
+// Dimensions of m : (lines , columns).
 func (m *Mat) Dimensions() (int, int) {
 	return m.l, m.c
 }
@@ -72,16 +72,21 @@ func (m *Mat) bitCoordinates(l, c int) (word, shift int) {
 }
 
 // NewVect retuns a 1 x c matrix.
+// Note : Vect are defined as "horizontal" matrix, for performance.
 func NewVect(c int) *Mat {
 	return NewMat(1, c)
 }
 
+// NewVectUint64 constructs a Vect from the bits of a uint64.
+// The size of the Vect is adjusted to fit all the non zero bits.
 func NewVectUint64(value uint64) *Mat {
 	v := NewVect(bits.Len(uint(value)))
 	v.d[0] = value
 	return v
 }
 
+// NewVectInt constructs a Vect from the bits of a int.
+// The size of the Vect is adjusted to fit all the non zero bits.
 func NewVectInt(value int) *Mat {
 	v := NewVect(bits.Len(uint(value)))
 	v.d[0] = uint64(value)
@@ -89,7 +94,7 @@ func NewVectInt(value int) *Mat {
 }
 
 // Set a single coefficient.
-// val should be à or 1.
+// val should be 0 or 1. Attempting to set another value will panic.
 // Exceeding Dimensions is ok, and will be silently ignored.
 func (m *Mat) Set(l, c, val int) {
 	w, s := m.bitCoordinates(l, c)
@@ -106,7 +111,7 @@ func (m *Mat) Set(l, c, val int) {
 	}
 }
 
-// Get the corresponding bit.
+// Get the corresponding bit (0 or 1).
 // Exceeding Dimensions is ok, and will return 0.
 func (m *Mat) Get(l, c int) int {
 	w, s := m.bitCoordinates(l, c)
@@ -137,7 +142,8 @@ func (m *Mat) stringL(l int) string {
 	return b.String()
 }
 
-// String display bits with msb first, as if printed with %b, line by line.
+// String display bits with the most-significant-bit first, as if printed with %b, line by line.
+// Note that doing so, the main diagonal will be displayed from top right to bottom left.
 func (m *Mat) String() string {
 	if m.c*m.l == 0 {
 		return "\n"
@@ -195,7 +201,7 @@ func (m *Mat) ZerosCount() int {
 	return m.c*m.l - m.OnesCount()
 }
 
-// Randomize all coeffficients.
+// Randomize all coefficients using pseudo-random default generator.
 func (m *Mat) Randomize() {
 	for i := range m.d {
 		m.d[i] = rand.Uint64()
@@ -204,6 +210,7 @@ func (m *Mat) Randomize() {
 }
 
 // Ones set all coeff to 1
+// Optimized for efficiency.
 func (m *Mat) Ones() {
 	for i := range m.d {
 		m.d[i] = uintmax
@@ -212,6 +219,7 @@ func (m *Mat) Ones() {
 }
 
 // Zeros set all coeff to 0
+// Optimized for efficiency.
 func (m *Mat) Zeros() {
 	for i := range m.d {
 		m.d[i] = 0
@@ -219,7 +227,7 @@ func (m *Mat) Zeros() {
 	// m.normalize()
 }
 
-// Normalize set the padding bits to 0.
+// Normalize set the internal padding bits to 0.
 func (m *Mat) Normalize() {
 	if m.c%64 == 0 {
 		return
@@ -231,13 +239,13 @@ func (m *Mat) Normalize() {
 	}
 }
 
-// NewLine adds a new, empty line to the BOTTOM matrix, at the end.
+// NewLine adds a new, empty line to the BOTTOM of the matrix, at the end.
 func (m *Mat) NewLine() {
 	m.d = append(m.d, make([]uint64, m.nbOfWordsPerLine())...)
 	m.l++
 }
 
-// NewCol adds a new empty column to the LEFT of the matrix.
+// NewCol adds a new empty column to the LEFT of the matrix ( higher columns index)
 func (m *Mat) NewCol() {
 	if m.c%64 != 0 {
 		m.c++
@@ -281,18 +289,18 @@ func (m *Mat) matMulNaive(n *Mat) *Mat {
 // MatMul multiply both matrixes, returning a m x n in a new one.
 // m and n are unchanged.
 func (m *Mat) MatMul(n *Mat) *Mat {
-	// return m.matMulTr(n.T())
-	return m.matMulNaive(n)
+	return m.MatMulTr(n.T())
+	//return m.matMulNaive(n)
 }
 
-// Multiply m by n transposed.
-// More efficient due to word by word operations.
-func (m *Mat) matMulTr(p *Mat) *Mat {
+// Multiply m by the transposed of p.
+// m and p are unchanged.
+// More efficient because word by word operations process 64 elementary operations at once.
+func (m *Mat) MatMulTr(p *Mat) *Mat {
 	if p == nil || m.c != p.c {
 		panic("dimensions are mismatched")
 	}
 	r := NewMat(m.l, p.l)
-	// idea is to transpose n so that operations can be done on full uint64 words.
 
 	w := m.nbOfWordsPerLine()
 	for i := 0; i < m.l; i++ {
@@ -319,6 +327,7 @@ func (m *Mat) T() *Mat {
 	return r
 }
 
+// Equal test for equality, ie same dimensions and same content.
 func (m *Mat) Equal(n *Mat) bool {
 	if n == nil || m.c != n.c || m.l != n.l {
 		return false
@@ -336,6 +345,7 @@ func (m *Mat) Equal(n *Mat) bool {
 // NewFromInt constructs a matrix from the provided uint64_s.
 // Each value represent a line.
 // There are always 64 columns.
+// Use CloneDims to adjust dimensions afterwards if needed.
 func NewFromInt(ss ...uint64) *Mat {
 	m := NewMat(len(ss), 64)
 	for d := range m.d {
@@ -346,7 +356,7 @@ func NewFromInt(ss ...uint64) *Mat {
 
 // CloneDims clone m into a new matrix with different dimensions.
 // m is unchanged, n is 0-padded if necessary.
-// Specify a 0 or negative value to keep the existing dimension.
+// Specify a 0 or negative value to keep the original dimension.
 func (m *Mat) CloneDims(l, c int) (n *Mat) {
 	if l <= 0 {
 		l = m.l
@@ -371,5 +381,4 @@ func (m *Mat) Apply(f func(i, j int) (value int)) {
 			m.Set(i, j, f(i, j))
 		}
 	}
-
 }

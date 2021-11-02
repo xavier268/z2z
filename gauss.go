@@ -1,6 +1,6 @@
 package z2z
 
-// swap lines i and j
+// swapLines i and j
 func (m *Mat) swapLines(i, j int) {
 	if i == j {
 		return
@@ -11,8 +11,8 @@ func (m *Mat) swapLines(i, j int) {
 	}
 }
 
-// swap columns i and j
-// less effient that swapping lines.
+// swapCols swaps columns i and j.
+// Less effient that swapping lines.
 func (m *Mat) swapCols(i, j int) {
 	if i == j {
 		return
@@ -24,7 +24,7 @@ func (m *Mat) swapCols(i, j int) {
 	}
 }
 
-// add line j to line i
+// addLines : line j is added to line i. j line remains unchanged.
 func (m *Mat) addLines(i, j int) {
 	wc := m.nbOfWordsPerLine()
 	for w := 0; w < wc; w++ {
@@ -32,18 +32,17 @@ func (m *Mat) addLines(i, j int) {
 	}
 }
 
-// add col j to i
+// addCols : column j is added to columns i
 func (m *Mat) addCols(i, j int) {
 	for l := 0; l < m.l; l++ {
 		m.Set(l, i, m.Get(l, j)^m.Get(l, i))
 	}
 }
 
-// Gauss apply the Gauss-Jordan pivot to compute inverse of m.
-// If m is NOT invertible,  iv is nil
+// GaussShort apply the Gauss-Jordan pivot to compute inverse (iv) of m.
+// If m is NOT invertible,  it returns nil.
 // m is unchanged.
-
-// gaussShort returns as soon as it is clear that m is not invertible.
+// GaussShort returns nil immediately as soon as it is clear that m is not inversible.
 func (m *Mat) GaussShort() (iv *Mat) {
 
 	if m.c != m.l {
@@ -69,7 +68,7 @@ func (m *Mat) GaussShort() (iv *Mat) {
 			}
 		}
 
-		// no way to get a 1, lets continue, not invertible
+		// no way to get a 1, not invertible
 		if id.Get(r, r) == 0 {
 			return nil
 		} else {
@@ -87,14 +86,13 @@ func (m *Mat) GaussShort() (iv *Mat) {
 }
 
 // GaussFull computes a full row echelon format (re) and the quasi inverse (iv).
-// ok is true if m was inversible, and in such case, re is identity.
-// iv(l,l) * m (l,c) = re (l,c)
-// If ok is true, determinant is 1, it is 0 otherwise.
+// ok is true if m was inversible (ie, determinant is 1), and in such case, re is the identity matrix.
+// The following is always verified : iv(l,l) * m (l,c) = re (l,c).
 // The rk is the rank of the matrix.
 func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool, rk int) {
 	ok = (m.c == m.l)
-	iv = NewId(m.l) // l x l, Id or projector in a sub-space.
-	re = m.Clone()  // l x c , same dim as m
+	iv = NewId(m.l) // l x l , start with id
+	re = m.Clone()  // l x c , start with a clone of m
 
 	rl, rc := 0, 0 // pivots indexes
 	for rl < m.l && rc < m.c {
@@ -113,11 +111,11 @@ func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool, rk int) {
 		// no way to get a 1, lets continue, not invertible
 		if re.Get(rl, rc) == 0 {
 			ok = false
-			rc++
+			rc++ // do not increment line, nor rank.
 			continue
 		} else {
 			// we have a 1 at (rl,rc),
-			// lets clean up the rest of the lines
+			// lets clean up the rest of the lines for that column.
 			for l := 0; l < re.l; l++ {
 				if l != rl && re.Get(l, rc) == 1 {
 					re.addLines(l, rl)

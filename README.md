@@ -1,10 +1,16 @@
 # z2z
 Matrix operations in Z/2Z
 
-Basic matrix operations, see details in godoc.
-Multiplication is implemented by transposing one of the terms first, generating significant speed gains.
+# Basic operations
+
+See details in godoc.
 
 Vectors are 1 x c Matrixes, for efficiency.
+
+Multiplication is implemented by transposing one of the terms first, generating significant speed gains.
+Use MatMulTr to multiply by a vector.
+
+# Gauss-Jordan reduction :
 
 GaussShort computes the inverse of a square matrix.
 

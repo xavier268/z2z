@@ -27,7 +27,7 @@ func verifyMatMulTr(t *testing.T, l int, c int, cc int) {
 		p.Randomize()
 
 		r1 := m.matMulNaive(p)
-		r2 := m.matMulTr(p.T())
+		r2 := m.MatMulTr(p.T())
 
 		if !r1.Equal(r2) {
 			fmt.Println("Want :\n", r1)
