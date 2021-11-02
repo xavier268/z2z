@@ -19,7 +19,7 @@ type Mat struct {
 
 const (
 	uintmax = 0xFFFF_FFFF_FFFF_FFFF
-	Version = "0.3.2"
+	Version = "0.3.3"
 )
 
 // NewMat constructs a l x c matrix.

@@ -156,7 +156,7 @@ func TestGaussInvert(t *testing.T) {
 
 func testInvert(t *testing.T, m *Mat) bool {
 	var r *Mat
-	iv := m.GaussShort()
+	iv := m.Inverse()
 	ok := iv != nil
 	id := NewId(m.c)
 	if ok {
@@ -197,12 +197,12 @@ func TestRank(t *testing.T) {
 		rk int
 	)
 	m := NewId(4)
-	_, _, ok, rk = m.GaussFull()
+	_, _, ok, rk = m.Gauss()
 	if !ok || rk != 4 {
 		t.Fatal("unexpected rank 4x4")
 	}
 	m = m.CloneDims(6, 0)
-	_, _, ok, rk = m.GaussFull()
+	_, _, ok, rk = m.Gauss()
 	if ok || rk != 4 {
 		t.Fatal("unexpected rank 6x4")
 	}
@@ -215,7 +215,7 @@ func testGaussFull(t *testing.T, l int, c int) {
 		m := NewMat(l, c)
 		m.Randomize()
 
-		re, iv, ok, rk := m.GaussFull()
+		re, iv, ok, rk := m.Gauss()
 		ivxm := iv.MatMul(m)
 		id := NewId(m.l)
 

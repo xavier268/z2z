@@ -79,7 +79,7 @@ func BenchmarkGaussShort5(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_ = m.GaussShort()
+		_ = m.Inverse()
 	}
 }
 
@@ -89,7 +89,7 @@ func BenchmarkGaussShort50(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_ = m.GaussShort()
+		_ = m.Inverse()
 	}
 }
 
@@ -99,7 +99,7 @@ func BenchmarkGaussShort500(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_ = m.GaussShort()
+		_ = m.Inverse()
 	}
 }
 
@@ -109,7 +109,7 @@ func BenchmarkGaussShort5000(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_ = m.GaussShort()
+		_ = m.Inverse()
 	}
 }
 
@@ -121,7 +121,7 @@ func BenchmarkGaussFull5(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _, _ = m.GaussFull()
+		_, _, _, _ = m.Gauss()
 	}
 }
 func BenchmarkGaussFull50(b *testing.B) {
@@ -130,7 +130,7 @@ func BenchmarkGaussFull50(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _, _ = m.GaussFull()
+		_, _, _, _ = m.Gauss()
 	}
 }
 
@@ -140,7 +140,7 @@ func BenchmarkGaussFull500(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _, _ = m.GaussFull()
+		_, _, _, _ = m.Gauss()
 	}
 }
 
@@ -150,7 +150,7 @@ func BenchmarkGaussFull5000(b *testing.B) {
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _, _ = m.GaussFull()
+		_, _, _, _ = m.Gauss()
 	}
 }
 

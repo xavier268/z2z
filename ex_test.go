@@ -4,14 +4,14 @@ import "fmt"
 
 var _ = 0
 
-func ExampleMat_GaussShort() {
+func ExampleMat_Inverse() {
 
 	m := NewId(4)
 	m.Set(1, 3, 1)
 	m.Set(2, 1, 1)
 
 	fmt.Print("m\n", m)
-	inv := m.GaussShort()
+	inv := m.Inverse()
 	ok := inv != nil
 
 	fmt.Print("inv\n", inv)

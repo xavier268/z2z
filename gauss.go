@@ -39,11 +39,11 @@ func (m *Mat) addCols(i, j int) {
 	}
 }
 
-// GaussShort apply the Gauss-Jordan pivot to compute inverse (iv) of m.
+// Inverse apply the Gauss-Jordan pivot to compute inverse (iv) of m.
 // If m is NOT invertible,  it returns nil.
 // m is unchanged.
-// GaussShort returns nil immediately as soon as it is clear that m is not inversible.
-func (m *Mat) GaussShort() (iv *Mat) {
+// Inverse returns nil immediately as soon as it is clear that m is not inversible.
+func (m *Mat) Inverse() (iv *Mat) {
 
 	if m.c != m.l {
 		return nil
@@ -85,11 +85,11 @@ func (m *Mat) GaussShort() (iv *Mat) {
 	return iv
 }
 
-// GaussFull computes a full row echelon format (re) and the quasi inverse (iv).
+// Gauss computes a full row echelon format (re) and the quasi inverse (iv).
 // ok is true if m was inversible (ie, determinant is 1), and in such case, re is the identity matrix.
 // The following is always verified : iv(l,l) * m (l,c) = re (l,c).
 // The rk is the rank of the matrix.
-func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool, rk int) {
+func (m *Mat) Gauss() (re *Mat, iv *Mat, ok bool, rk int) {
 	ok = (m.c == m.l)
 	iv = NewId(m.l) // l x l , start with id
 	re = m.Clone()  // l x c , start with a clone of m
