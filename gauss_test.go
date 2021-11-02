@@ -95,6 +95,8 @@ func TestGaussCols(t *testing.T) {
 	}
 }
 
+// --- GAUSS SHORT -------------
+
 func TestGaussInvert(t *testing.T) {
 	var m *Mat
 
@@ -154,19 +156,9 @@ func TestGaussInvert(t *testing.T) {
 
 func testInvert(t *testing.T, m *Mat) bool {
 	var r *Mat
-	id, iv, ok := m.Gauss()
-
-	if m.c == m.l {
-		idd := NewId(m.c)
-		if (idd.Equal(id)) != ok {
-			fmt.Println(m)
-			fmt.Println(id)
-			fmt.Println(iv)
-			fmt.Println(ok)
-			t.Fatal("inconsitant id and ok")
-		}
-	}
-
+	iv := m.GaussShort()
+	ok := iv != nil
+	id := NewId(m.c)
 	if ok {
 		fmt.Println("m is inversible", m.l, m.c)
 		r = m.MatMul(iv)
@@ -184,4 +176,63 @@ func testInvert(t *testing.T, m *Mat) bool {
 		fmt.Println("m is not inversible", m.l, m.c)
 	}
 	return ok
+}
+
+// ----- GAUSS FULL ------------
+
+func TestGaussFull(t *testing.T) {
+	testGaussFull(t, 1, 1)
+	testGaussFull(t, 5, 5)
+	testGaussFull(t, 7, 9)
+	testGaussFull(t, 64, 64)
+	testGaussFull(t, 128, 128)
+	testGaussFull(t, 127, 127)
+	testGaussFull(t, 129, 129)
+	testGaussFull(t, 129, 65)
+}
+
+func testGaussFull(t *testing.T, l int, c int) {
+	for i := 0; i < 20; i++ {
+		l, c = c, l // swap l and c
+
+		m := NewMat(l, c)
+		m.Randomize()
+
+		re, iv, ok := m.GaussFull()
+		ivxm := iv.MatMul(m)
+		id := NewId(m.l)
+
+		fmt.Printf("testGaussFull : round = %d, dims = %dx%d\t invertible : %v\n", i, l, c, ok)
+
+		if !ivxm.Equal(re) {
+			fmt.Println("m")
+			fmt.Println(m)
+			fmt.Println("re")
+			fmt.Println(re)
+			fmt.Println("iv")
+			fmt.Println(iv)
+			fmt.Println("ok : ", ok)
+			fmt.Println()
+			fmt.Println("iv * m")
+			fmt.Println(ivxm)
+			fmt.Println("iv * m == re ? ", ivxm.Equal(re))
+			t.Fatal("error : iv * m != re ")
+		}
+
+		if ok && !id.Equal(re) {
+			fmt.Println("re")
+			fmt.Println(re)
+			fmt.Println("iv")
+			fmt.Println(iv)
+			fmt.Println("ok : ", ok)
+
+			fmt.Println("\nm")
+			fmt.Println(m)
+			fmt.Println("iv * m")
+			fmt.Println(ivxm)
+			fmt.Println("id == re ? ", id.Equal(re))
+			t.Fatal("error : ok is true, but re != id")
+		}
+
+	}
 }

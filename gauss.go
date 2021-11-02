@@ -40,17 +40,21 @@ func (m *Mat) addCols(i, j int) {
 }
 
 // Gauss apply the Gauss-Jordan pivot to compute inverse of m.
-// If m is invertible, then id is identity and iv is inverse and ok is true
-// If m is NOT invertible, id contains identity as a topleft submatrix, and ok is false
-// and 0 elsewhere, and iv * m = id
+// If m is NOT invertible,  iv is nil
 // m is unchanged.
-func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
-	ok = (m.c == m.l)
+
+// gaussShort returns as soon as it is clear that m is not invertible.
+func (m *Mat) GaussShort() (iv *Mat) {
+
+	if m.c != m.l {
+		return nil
+	}
+
 	iv = NewMat(m.l, m.l) // l x l
 	for i := 0; i < m.l && i < m.c; i++ {
 		iv.Set(i, i, 1)
 	}
-	id = m.Clone() // l x c , same dim as m
+	id := m.Clone() // l x c , same dim as m
 
 	for r := 0; r < m.l && r < m.c; r++ {
 		// ensure (r,r) is 1
@@ -67,8 +71,7 @@ func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
 
 		// no way to get a 1, lets continue, not invertible
 		if id.Get(r, r) == 0 {
-			ok = false
-			continue
+			return nil
 		} else {
 			// we have a 1 at (r,r),
 			// lets clean up the rest of the lines
@@ -80,5 +83,48 @@ func (m *Mat) Gauss() (id *Mat, iv *Mat, ok bool) {
 			}
 		}
 	}
-	return id, iv, ok
+	return iv
+}
+
+// GaussFull computes a full row echelon format (re) and the quasi inverse (iv).
+// ok is true if m was inversible, and in such case, re is identity.
+// iv(l,l) * m (l,c) = re (l,c)
+func (m *Mat) GaussFull() (re *Mat, iv *Mat, ok bool) {
+	ok = (m.c == m.l)
+	iv = NewId(m.l) // l x l, Id or projector in a sub-space.
+	re = m.Clone()  // l x c , same dim as m
+
+	rl, rc := 0, 0 // pivots indexes
+	for rl < m.l && rc < m.c {
+		// ensure (rl,rc) is 1
+		if re.Get(rl, rc) == 0 {
+			// look for a line under to swap ?
+			for l := rl + 1; l < re.l; l++ {
+				if re.Get(l, rc) == 1 {
+					re.swapLines(rl, l)
+					iv.swapLines(rl, l)
+					break
+				}
+			}
+		}
+
+		// no way to get a 1, lets continue, not invertible
+		if re.Get(rl, rc) == 0 {
+			ok = false
+			rc++
+			continue
+		} else {
+			// we have a 1 at (r,r),
+			// lets clean up the rest of the lines
+			for l := 0; l < re.l; l++ {
+				if l != rl && re.Get(l, rc) == 1 {
+					re.addLines(l, rl)
+					iv.addLines(l, rl)
+				}
+			}
+			rc++
+			rl++
+		}
+	}
+	return re, iv, ok
 }

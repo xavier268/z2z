@@ -4,16 +4,16 @@ import "fmt"
 
 var _ = 0
 
-func ExampleMat_Gauss() {
+func ExampleMat_GaussShort() {
 
 	m := NewId(4)
 	m.Set(1, 3, 1)
 	m.Set(2, 1, 1)
 
 	fmt.Print("m\n", m)
-	istar, inv, ok := m.Gauss()
+	inv := m.GaussShort()
+	ok := inv != nil
 
-	fmt.Print("istar\n", istar)
 	fmt.Print("inv\n", inv)
 	fmt.Println("inversible :", ok)
 	fmt.Println("check :", NewId(4).Equal(inv.MatMul(m)))
@@ -24,11 +24,6 @@ func ExampleMat_Gauss() {
 	// 0001
 	// 1010
 	// 0110
-	// 1000
-	// istar
-	// 0001
-	// 0010
-	// 0100
 	// 1000
 	// inv
 	// 0001

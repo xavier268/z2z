@@ -71,45 +71,45 @@ func BenchmarkMatMulTr5000(b *testing.B) {
 	}
 }
 
-// -- GAUSS --
+// -- GAUSS short --
 
-func BenchmarkGauss5(b *testing.B) {
+func BenchmarkGaussShort5(b *testing.B) {
 
 	m := NewId(5)
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _ = m.Gauss()
+		_ = m.GaussShort()
 	}
 }
 
-func BenchmarkGauss50(b *testing.B) {
+func BenchmarkGaussShort50(b *testing.B) {
 
 	m := NewId(50)
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _ = m.Gauss()
+		_ = m.GaussShort()
 	}
 }
 
-func BenchmarkGauss500(b *testing.B) {
+func BenchmarkGaussShort500(b *testing.B) {
 
 	m := NewId(500)
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _ = m.Gauss()
+		_ = m.GaussShort()
 	}
 }
 
-func BenchmarkGauss5000(b *testing.B) {
+func BenchmarkGaussShort5000(b *testing.B) {
 
 	m := NewId(5000)
 	m.Randomize()
 
 	for i := 0; i < b.N; i++ {
-		_, _, _ = m.Gauss()
+		_ = m.GaussShort()
 	}
 }
 
@@ -119,22 +119,21 @@ func BenchmarkGauss5000(b *testing.B) {
 
 //
 //
+
 // goos: linux
 // goarch: amd64
 // pkg: github.com/xavier268/z2z
 // cpu: Intel(R) Core(TM) i7-10700 CPU @ 2.90GHz
-// BenchmarkMatMulNaive5-8           912189              1131 ns/op              96 B/op          2 allocs/op
-// BenchmarkMatMulNaive50-8             632           1888703 ns/op             464 B/op          2 allocs/op
-// BenchmarkMatMulNaive500-8              1        1872507360 ns/op           65584 B/op          3 allocs/op
-//
-// BenchmarkMatMulTr5-8             1801214               652.2 ns/op           192 B/op          4 allocs/op
-// BenchmarkMatMulTr50-8              15664             76284 ns/op             928 B/op          4 allocs/op
-// BenchmarkMatMulTr500-8                39          28192895 ns/op           66472 B/op          4 allocs/op
-// BenchmarkMatMulTr5000-8                1        25917038799 ns/op        9486432 B/op          5 allocs/op
-//
-// BenchmarkGauss5-8                5173652               230.4 ns/op           192 B/op          4 allocs/op
-// BenchmarkGauss50-8                 72410             16368 ns/op             928 B/op          4 allocs/op
-// BenchmarkGauss500-8                  298           3887356 ns/op           65742 B/op          4 allocs/op
-// BenchmarkGauss5000-8                   1        2416653762 ns/op         9486480 B/op          6 allocs/op
+// BenchmarkMatMulNaive5-8           983400              1131 ns/op              96 B/op          2 allocs/op
+// BenchmarkMatMulNaive50-8             636           1876318 ns/op             464 B/op          2 allocs/op
+// BenchmarkMatMulNaive500-8              1        1869947495 ns/op           65584 B/op          3 allocs/op
+// BenchmarkMatMulTr5-8             1811682               660.1 ns/op           192 B/op          4 allocs/op
+// BenchmarkMatMulTr50-8              15530             76447 ns/op             928 B/op          4 allocs/op
+// BenchmarkMatMulTr500-8                42          28080307 ns/op           66412 B/op          4 allocs/op
+// BenchmarkMatMulTr5000-8                1        26017520025 ns/op        9486432 B/op          5 allocs/op
+// BenchmarkGaussShort5-8           8083322               130.2 ns/op           144 B/op          3 allocs/op
+// BenchmarkGaussShort50-8            93700             15489 ns/op             880 B/op          3 allocs/op
+// BenchmarkGaussShort500-8             322           3680521 ns/op           65685 B/op          3 allocs/op
+// BenchmarkGaussShort5000-8              1        2343296750 ns/op         9486432 B/op          5 allocs/op
 // PASS
-// ok      github.com/xavier268/z2z        41.864s
+// ok      github.com/xavier268/z2z        44.000s

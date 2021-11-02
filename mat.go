@@ -281,7 +281,8 @@ func (m *Mat) matMulNaive(n *Mat) *Mat {
 // MatMul multiply both matrixes, returning a m x n in a new one.
 // m and n are unchanged.
 func (m *Mat) MatMul(n *Mat) *Mat {
-	return m.matMulTr(n.T())
+	// return m.matMulTr(n.T())
+	return m.matMulNaive(n)
 }
 
 // Multiply m by n transposed.
@@ -296,9 +297,9 @@ func (m *Mat) matMulTr(p *Mat) *Mat {
 	w := m.nbOfWordsPerLine()
 	for i := 0; i < m.l; i++ {
 		for j := 0; j < p.l; j++ {
-			var v uint64
+			var v uint64 = 0
 			for c := 0; c < w; c++ {
-				v ^= m.d[i/w+c] & p.d[j/w+c]
+				v ^= m.d[i*w+c] & p.d[j*w+c]
 			}
 			r.Set(i, j, bits.OnesCount64(v)&1)
 		}
