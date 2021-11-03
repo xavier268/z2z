@@ -317,3 +317,30 @@ func TestMatMul(t *testing.T) {
 	}
 
 }
+
+func TestNewFromBytes(t *testing.T) {
+	type td struct {
+		bs []byte
+		st string
+	}
+	data := []td{
+		{[]byte{0}, "00000000"},
+		{[]byte{1}, "00000001"},
+		{[]byte{128}, "10000000"},
+		{[]byte{0, 0}, "0000000000000000"},
+		{[]byte{0, 1}, "0000000100000000"},
+		{[]byte{1, 0}, "0000000000000001"},
+		{[]byte{1, 2}, "0000001000000001"},
+		{[]byte{0, 3, 0}, "000000000000001100000000"},
+		{[]byte{128, 3, 0}, "000000000000001110000000"},
+		{[]byte{0, 3, 128}, "100000000000001100000000"},
+	}
+
+	for i, d := range data {
+		v := NewFromBytes(d.bs).stringL(0)
+		if v != d.st {
+			fmt.Printf("%d)  : bytes %b\ngot : %s\nwant: %s\n", i, d.bs, v, d.st)
+			t.Fatal("incorrect result")
+		}
+	}
+}

@@ -19,7 +19,7 @@ type Mat struct {
 
 const (
 	uintmax = 0xFFFF_FFFF_FFFF_FFFF
-	Version = "0.3.3"
+	Version = "0.3.5"
 )
 
 // NewMat constructs a l x c matrix.
@@ -56,6 +56,19 @@ func (m *Mat) Clone() *Mat {
 // Dimensions of m : (lines , columns).
 func (m *Mat) Dimensions() (int, int) {
 	return m.l, m.c
+}
+
+// NewFromBytes constructs a new Vect (1 x c) from the provided byte slice.
+// The total len in bits is 8 * len(bs)
+func NewFromBytes(bs []byte) *Mat {
+	if len(bs) == 0 {
+		panic("the provided slice is empty")
+	}
+	v := NewMat(1, 8*len(bs))
+	for i, b := range bs {
+		v.d[i/8] |= uint64(b) << (8 * (i % 8))
+	}
+	return v
 }
 
 // nbOfWordsPerLine provides the nb of uint64 words per line.
