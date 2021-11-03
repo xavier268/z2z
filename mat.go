@@ -266,7 +266,7 @@ func (m *Mat) NewCol() {
 	m.Normalize()
 }
 
-// MatMul multiply both matrixes, returning a m x n in a new one.
+// MatMul multiply both matrices, returning a m x n in a new one.
 // Naive implementation.
 // m and n are unchanged.
 func (m *Mat) matMulNaive(n *Mat) *Mat {
@@ -286,7 +286,7 @@ func (m *Mat) matMulNaive(n *Mat) *Mat {
 	return r
 }
 
-// MatMul multiply both matrixes, returning a m x n in a new one.
+// MatMul multiply both matrices, returning a m x n in a new one.
 // m and n are unchanged.
 func (m *Mat) MatMul(n *Mat) *Mat {
 	return m.MatMulTr(n.T())
