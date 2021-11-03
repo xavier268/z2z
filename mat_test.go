@@ -62,6 +62,7 @@ func TestBitCoord(t *testing.T) {
 		{3, 65, 7, 1},
 		{3, 64, 7, 0},
 		{3, 63, 6, 63},
+		{0, 7, 0, 7},
 	}
 
 	m := NewMat(5, 80)
@@ -337,8 +338,11 @@ func TestNewFromBytes(t *testing.T) {
 	}
 
 	for i, d := range data {
-		v := NewFromBytes(d.bs).stringL(0)
-		if v != d.st {
+		v := NewFromBytes(d.bs)
+		if v.l != 1 || v.c != len(d.bs)*8 {
+			t.Fatal("dims are mismatched")
+		}
+		if v.stringL(0) != d.st {
 			fmt.Printf("%d)  : bytes %b\ngot : %s\nwant: %s\n", i, d.bs, v, d.st)
 			t.Fatal("incorrect result")
 		}
