@@ -88,6 +88,7 @@ func (m *Mat) Inverse() (iv *Mat) {
 // Gauss computes a full row echelon format (re) and the quasi inverse (iv).
 // ok is true if m was inversible (ie, determinant is 1), and in such case, re is the identity matrix.
 // The following is always verified : iv(l,l) * m (l,c) = re (l,c).
+// iv(l,l) is always invertible, since we started with id and only applied row operatons that do not change the determinant.
 // The rk is the rank of the matrix.
 func (m *Mat) Gauss() (re *Mat, iv *Mat, ok bool, rk int) {
 	ok = (m.c == m.l)
