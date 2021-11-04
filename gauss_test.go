@@ -221,6 +221,11 @@ func testGaussFull(t *testing.T, l int, c int) {
 
 		fmt.Printf("testGaussFull : round = %d, dims = %dx%d\t invertible : %v\t rank = %d\n", i, l, c, ok, rk)
 
+		// iv itself should ALWAYS be invertible
+		if iv.Inverse() == nil {
+			t.Fatal("iv should have been invertible")
+		}
+
 		if rk > m.c || rk > m.l {
 			t.Fatalf("rank %d is inconsistant with dimensions %d x %d ", rk, m.l, m.c)
 		}
