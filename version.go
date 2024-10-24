@@ -4,7 +4,7 @@ package z2z
 
 const (
 	VERSION   = "0.3.6"
-	COPYRIGHT = "(c) Xavier Gandillot 2022-2024"
+	COPYRIGHT = "(c) Xavier Gandillot 2021-2024"
 	NAME      = "z2z"
 	uintmax   = 0xFFFF_FFFF_FFFF_FFFF
 )
