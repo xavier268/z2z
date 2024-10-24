@@ -10,7 +10,7 @@ Vectors are 1 x c Matrixes, for efficiency.
 Multiplication is implemented by transposing one of the terms first, generating significant speed gains.
 Use MatMulTr to multiply by a vector.
 
-Low level operations modify the matrix in plkace, high level operations generate a new matrix. See godoc for details.
+Low level operations modify the matrix in place, high level operations generate a new matrix. See godoc for details.
 
 # Gauss-Jordan reduction
 
