@@ -17,11 +17,6 @@ type Mat struct {
 	d    []uint64 // actual data
 }
 
-const (
-	uintmax = 0xFFFF_FFFF_FFFF_FFFF
-	Version = "0.3.5"
-)
-
 // NewMat constructs a l x c matrix.
 func NewMat(l, c int) *Mat {
 	m := new(Mat)

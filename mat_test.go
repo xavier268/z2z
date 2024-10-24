@@ -209,6 +209,7 @@ func TestNewCol2(t *testing.T) {
 }
 
 func checkAddedCols(t *testing.T, l int, c int, adds int) {
+	_ = adds // compiler happy !
 	m := NewMat(l, c)
 	m.Randomize()
 	ref := m.Clone()

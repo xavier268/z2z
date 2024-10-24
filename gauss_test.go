@@ -154,7 +154,7 @@ func TestGaussInvert(t *testing.T) {
 
 }
 
-func testInvert(t *testing.T, m *Mat) bool {
+func testInvert(_ *testing.T, m *Mat) bool {
 	var r *Mat
 	iv := m.Inverse()
 	ok := iv != nil
